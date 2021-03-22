@@ -1,0 +1,36 @@
+buildscript {
+    ext {
+        repos = {
+            gradlePluginPortal()
+            mavenLocal()
+            mavenCentral()
+        }
+    }
+}
+
+plugins {
+    id 'java'
+    id 'idea'
+    id 'checkstyle'
+    id 'jacoco'
+    id 'groovy'
+}
+
+group = 'com.hltech'
+
+repositories(repos)
+
+apply from: 'gradle/test.gradle'
+apply from: 'gradle/codequality.gradle'
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+dependencies {
+    implementation 'com.hltech:sql-event-store-4j:unspecified'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
+
+    /* LOMBOK - generate additional bytecode during compilation*/
+    compileOnly "org.projectlombok:lombok:1.18.16"
+    annotationProcessor "org.projectlombok:lombok:1.18.16"
+}
