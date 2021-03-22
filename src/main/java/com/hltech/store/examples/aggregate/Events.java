@@ -1,6 +1,6 @@
 package com.hltech.store.examples.aggregate;
 
-import com.hltech.store.examples.common.Event;
+import com.hltech.store.examples.eventstore.Event;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
-import static com.hltech.store.examples.common.Event.generateAggregateId;
-import static com.hltech.store.examples.common.Event.generateEventId;
+import static com.hltech.store.examples.eventstore.Event.generateAggregateId;
+import static com.hltech.store.examples.eventstore.Event.generateEventId;
 
 @RequiredArgsConstructor
 class OrderService {

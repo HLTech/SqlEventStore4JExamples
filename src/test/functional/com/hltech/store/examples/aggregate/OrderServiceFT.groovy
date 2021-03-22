@@ -1,28 +1,16 @@
 package com.hltech.store.examples.aggregate
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.hltech.store.EventBodyMapper
-import com.hltech.store.EventStore
-import com.hltech.store.EventTypeMapper
-import com.hltech.store.JacksonEventBodyMapper
-import com.hltech.store.PostgreSQLContainerTest
-import com.hltech.store.PostgresEventStore
-import com.hltech.store.SimpleEventTypeMapper
-import com.hltech.store.examples.common.Event
+import com.hltech.store.examples.eventstore.EventStoreSpecification
 import spock.lang.Subject
 
-import java.util.function.Function
-
-import static com.hltech.store.EventTypeMapper.TypeNameAndVersion
-import static com.hltech.store.examples.aggregate.Events.OrderCancelled
-import static com.hltech.store.examples.aggregate.Events.OrderPlaced
-import static com.hltech.store.examples.aggregate.Events.OrderSent
 import static org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils.randomAlphanumeric
 
-class OrderServiceFT extends PostgreSQLContainerTest {
+class OrderServiceFT extends EventStoreSpecification {
+
+    Config config = new Config(eventStore, eventTypeMapper)
 
     @Subject
-    def service
+    def service = config.orderService
 
     def "placeOrder should place an order"() {
 
@@ -96,27 +84,5 @@ class OrderServiceFT extends PostgreSQLContainerTest {
 
     static ORDER_NUMBER = randomAlphanumeric(5)
     static ORDER_CANCELLATION_REASON = randomAlphanumeric(5)
-
-    def setup() {
-        Function<Event, UUID> eventIdExtractor = { it.id }
-        Function<Event, UUID> aggregateIdExtractor = { it.aggregateId }
-        EventTypeMapper<Event> eventTypeMapper = new SimpleEventTypeMapper<>(
-                [
-                        new TypeNameAndVersion(OrderPlaced, "OrderPlaced", 1),
-                        new TypeNameAndVersion(OrderCancelled, "OrderCancelled", 1),
-                        new TypeNameAndVersion(OrderSent, "OrderSent", 1)
-                ]
-        )
-        EventBodyMapper<Event> eventBodyMapper = new JacksonEventBodyMapper<>(new ObjectMapper())
-        EventStore<Event> eventStore = new PostgresEventStore(
-                eventIdExtractor,
-                aggregateIdExtractor,
-                eventTypeMapper,
-                eventBodyMapper,
-                PostgreSQLContainerTest.dataSource
-        )
-        def repository = new OrderRepository(eventStore)
-        service = new OrderService(repository)
-    }
 
 }

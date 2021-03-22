@@ -1,10 +1,10 @@
 package com.hltech.store.examples.aggregate;
 
-import com.hltech.store.examples.common.Event;
+import com.hltech.store.examples.eventstore.Event;
 
 import java.util.UUID;
 
-import static com.hltech.store.examples.common.Event.generateEventId;
+import static com.hltech.store.examples.eventstore.Event.generateEventId;
 
 class Order {
 

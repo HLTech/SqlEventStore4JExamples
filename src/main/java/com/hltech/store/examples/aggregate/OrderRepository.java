@@ -2,7 +2,7 @@ package com.hltech.store.examples.aggregate;
 
 import com.hltech.store.AggregateRepository;
 import com.hltech.store.EventStore;
-import com.hltech.store.examples.common.Event;
+import com.hltech.store.examples.eventstore.Event;
 
 import java.util.function.BiFunction;
 import java.util.function.Supplier;

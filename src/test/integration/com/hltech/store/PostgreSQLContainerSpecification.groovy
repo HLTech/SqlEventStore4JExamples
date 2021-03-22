@@ -10,7 +10,7 @@ import spock.lang.Specification
 import javax.sql.DataSource
 
 @Slf4j
-class PostgreSQLContainerTest extends Specification {
+class PostgreSQLContainerSpecification extends Specification {
 
     static PostgreSQLContainer postgreSQLContainer
     static Sql dbClient
