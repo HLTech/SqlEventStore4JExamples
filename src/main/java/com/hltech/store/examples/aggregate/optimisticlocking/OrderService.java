@@ -1,12 +1,13 @@
-package com.hltech.store.examples.aggregate;
+package com.hltech.store.examples.aggregate.optimisticlocking;
 
-import com.hltech.store.examples.aggregate.Events.OrderSent;
+import com.hltech.store.OptimisticLockingException;
+import com.hltech.store.examples.aggregate.optimisticlocking.Events.OrderSent;
 import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
-import static com.hltech.store.examples.aggregate.Events.OrderCancelled;
-import static com.hltech.store.examples.aggregate.Events.OrderPlaced;
+import static com.hltech.store.examples.aggregate.optimisticlocking.Events.OrderCancelled;
+import static com.hltech.store.examples.aggregate.optimisticlocking.Events.OrderPlaced;
 
 @RequiredArgsConstructor
 class OrderService {
@@ -22,13 +23,21 @@ class OrderService {
     void cancelOrder(UUID orderId, String reason) {
         Order order = repository.get(orderId);
         OrderCancelled event = order.cancel(reason);
-        repository.save(event);
+        try {
+            repository.save(event);
+        } catch (OptimisticLockingException ex) {
+            cancelOrder(orderId, reason);
+        }
     }
 
     void sendOrder(UUID orderId) {
         Order order = repository.get(orderId);
         OrderSent event = order.send();
-        repository.save(event);
+        try {
+            repository.save(event);
+        } catch (OptimisticLockingException ex) {
+            sendOrder(orderId);
+        }
     }
 
     Order getOrder(UUID orderId) {

@@ -1,4 +1,4 @@
-package com.hltech.store.examples.aggregate
+package com.hltech.store.examples.aggregate.optimisticlocking
 
 import com.hltech.store.examples.eventstore.EventStoreSpecification
 import spock.lang.Subject
@@ -17,8 +17,11 @@ class OrderServiceFT extends EventStoreSpecification {
         when: 'place an order'
             def orderId = service.placeOrder(ORDER_NUMBER)
 
-        then: 'order placed'
-            with (service.getOrder(orderId)) {
+        then: 'order exist'
+            def order = service.getOrder(orderId)
+
+        and: 'order placed'
+            with (order) {
                 assert status == 'Placed'
                 assert number == ORDER_NUMBER
             }
@@ -33,8 +36,14 @@ class OrderServiceFT extends EventStoreSpecification {
         when: 'cancel order'
             service.cancelOrder(orderId, ORDER_CANCELLATION_REASON)
 
+        then: 'order exist'
+            def order = service.getOrder(orderId)
+
         then: 'order cancelled'
-            service.getOrder(orderId).status == 'Cancelled'
+            with (order) {
+                assert status == 'Cancelled'
+                assert cancellationReason == ORDER_CANCELLATION_REASON
+            }
 
     }
 
@@ -63,8 +72,11 @@ class OrderServiceFT extends EventStoreSpecification {
         when: 'cancel order'
             service.sendOrder(orderId)
 
-        then: 'order placed'
-            service.getOrder(orderId).status == 'Sent'
+        then: 'order exist'
+            def order = service.getOrder(orderId)
+
+        then: 'order sent'
+            order.status == 'Sent'
 
     }
 

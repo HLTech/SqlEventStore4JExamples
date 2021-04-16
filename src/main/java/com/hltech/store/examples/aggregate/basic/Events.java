@@ -1,4 +1,4 @@
-package com.hltech.store.examples.aggregate;
+package com.hltech.store.examples.aggregate.basic;
 
 import com.hltech.store.examples.eventstore.Event;
 import lombok.Getter;
@@ -25,15 +25,6 @@ interface Events {
         private final UUID id;
         private final UUID aggregateId;
         private final String reason;
-
-    }
-
-    @RequiredArgsConstructor
-    @Getter
-    class OrderSent implements Event {
-
-        private final UUID id;
-        private final UUID aggregateId;
 
     }
 

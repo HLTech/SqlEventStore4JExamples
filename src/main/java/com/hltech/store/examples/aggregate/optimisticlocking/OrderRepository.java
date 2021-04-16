@@ -1,8 +1,9 @@
-package com.hltech.store.examples.aggregate;
+package com.hltech.store.examples.aggregate.optimisticlocking;
 
 import com.hltech.store.AggregateRepository;
 import com.hltech.store.EventStore;
 import com.hltech.store.examples.eventstore.Event;
+import com.hltech.store.versioning.MappingBasedVersioning;
 
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
@@ -22,6 +23,13 @@ class OrderRepository extends AggregateRepository<Order, Event> {
                 AGGREGATE_EVENT_APPLIER,
                 AGGREGATE_VERSION_APPLIER
         );
+        registerEvents((MappingBasedVersioning<Event>) eventStore.getEventVersioningStrategy());
+    }
+
+    private void registerEvents(MappingBasedVersioning<Event> eventVersioningStrategy) {
+        eventVersioningStrategy.registerMapping(Events.OrderPlaced.class, "OrderPlaced");
+        eventVersioningStrategy.registerMapping(Events.OrderCancelled.class, "OrderCancelled");
+        eventVersioningStrategy.registerMapping(Events.OrderSent.class, "OrderSent");
     }
 
 }
