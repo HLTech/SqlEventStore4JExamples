@@ -27,7 +27,7 @@ sourceCompatibility = 11
 targetCompatibility = 11
 
 dependencies {
-    implementation 'com.hltech:sql-event-store-4j:unspecified'
+    implementation 'com.hltech:sql-event-store-4j:0.0.6'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
 
     /* LOMBOK - generate additional bytecode during compilation*/

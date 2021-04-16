@@ -7,7 +7,7 @@ import static org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtil
 
 class OrderServiceFT extends EventStoreSpecification {
 
-    Config config = new Config(eventStore, eventTypeMapper)
+    Config config = new Config(eventStore, eventVersioningStrategy)
 
     @Subject
     def service = config.orderService
@@ -18,7 +18,10 @@ class OrderServiceFT extends EventStoreSpecification {
             def orderId = service.placeOrder(ORDER_NUMBER)
 
         then: 'order placed'
-            service.getOrder(orderId).status == 'Placed'
+            with (service.getOrder(orderId)) {
+                assert status == 'Placed'
+                assert number == ORDER_NUMBER
+            }
 
     }
 

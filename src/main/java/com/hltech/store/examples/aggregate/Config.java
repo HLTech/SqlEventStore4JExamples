@@ -1,8 +1,8 @@
 package com.hltech.store.examples.aggregate;
 
 import com.hltech.store.EventStore;
-import com.hltech.store.EventTypeMapper;
 import com.hltech.store.examples.eventstore.Event;
+import com.hltech.store.versioning.MappingBasedVersioning;
 import lombok.Getter;
 
 @Getter
@@ -13,17 +13,17 @@ class Config {
 
     Config(
             EventStore<Event> eventStore,
-            EventTypeMapper<Event> eventTypeMapper
+            MappingBasedVersioning<Event> mappingBasedVersioning
     ) {
-        configureEventTypeMapper(eventTypeMapper);
+        configureEventTypeMapper(mappingBasedVersioning);
         orderRepository = new OrderRepository(eventStore);
         orderService = new OrderService(orderRepository);
     }
 
-    void configureEventTypeMapper(EventTypeMapper<Event> eventTypeMapper) {
-        eventTypeMapper.registerMapping(Events.OrderPlaced.class, "OrderPlaced", 1);
-        eventTypeMapper.registerMapping(Events.OrderCancelled.class, "OrderCancelled", 1);
-        eventTypeMapper.registerMapping(Events.OrderSent.class, "OrderSent", 1);
+    void configureEventTypeMapper(MappingBasedVersioning<Event> mappingBasedVersioning) {
+        mappingBasedVersioning.registerMapping(Events.OrderPlaced.class, "OrderPlaced");
+        mappingBasedVersioning.registerMapping(Events.OrderCancelled.class, "OrderCancelled");
+        mappingBasedVersioning.registerMapping(Events.OrderSent.class, "OrderSent");
     }
 
 }

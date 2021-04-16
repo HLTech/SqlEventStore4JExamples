@@ -1,47 +1,38 @@
 package com.hltech.store.examples.aggregate;
 
+import com.hltech.store.examples.aggregate.Events.OrderSent;
 import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
-import static com.hltech.store.examples.eventstore.Event.generateAggregateId;
-import static com.hltech.store.examples.eventstore.Event.generateEventId;
+import static com.hltech.store.examples.aggregate.Events.OrderCancelled;
+import static com.hltech.store.examples.aggregate.Events.OrderPlaced;
 
 @RequiredArgsConstructor
 class OrderService {
 
-    private static final Runnable throwOrderNotFoundException = () -> {
-        throw new IllegalStateException("Order not found");
-    };
-
     private final OrderRepository repository;
 
     UUID placeOrder(String orderNumber) {
-        Events.OrderPlaced event = new Events.OrderPlaced(
-                generateEventId(),
-                generateAggregateId(),
-                orderNumber
-        );
+        OrderPlaced event = Order.place(orderNumber);
         repository.save(event);
         return event.getAggregateId();
     }
 
-    Order getOrder(UUID orderId) {
-        return repository.get(orderId);
-    }
-
     void cancelOrder(UUID orderId, String reason) {
-        repository
-                .find(orderId)
-                .map(order -> order.cancel(reason))
-                .ifPresentOrElse(repository::save, throwOrderNotFoundException);
+        Order order = repository.get(orderId);
+        OrderCancelled event = order.cancel(reason);
+        repository.save(event);
     }
 
     void sendOrder(UUID orderId) {
-        repository
-                .find(orderId)
-                .map(Order::send)
-                .ifPresentOrElse(repository::save, throwOrderNotFoundException);
+        Order order = repository.get(orderId);
+        OrderSent event = order.send();
+        repository.save(event);
+    }
+
+    Order getOrder(UUID orderId) {
+        return repository.get(orderId);
     }
 
 }
