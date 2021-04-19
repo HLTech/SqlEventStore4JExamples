@@ -1,4 +1,4 @@
-package com.hltech.store
+package com.hltech.store.examples
 
 import groovy.sql.Sql
 import groovy.util.logging.Slf4j

@@ -5,6 +5,9 @@ buildscript {
             mavenLocal()
             mavenCentral()
         }
+        eventStoreVersion = '0.0.7'
+        jacksonVersion = '2.12.1'
+        lombokVersion = '1.18.16'
     }
 }
 
@@ -27,10 +30,10 @@ sourceCompatibility = 11
 targetCompatibility = 11
 
 dependencies {
-    implementation 'com.hltech:sql-event-store-4j:0.0.6'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
+    implementation "com.hltech:sql-event-store-4j:$eventStoreVersion"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
 
     /* LOMBOK - generate additional bytecode during compilation*/
-    compileOnly "org.projectlombok:lombok:1.18.16"
-    annotationProcessor "org.projectlombok:lombok:1.18.16"
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
 }

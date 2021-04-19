@@ -1,14 +1,14 @@
 package com.hltech.store.examples.aggregate.basic;
 
-import com.hltech.store.examples.eventstore.Event;
+import com.hltech.store.examples.event.Event;
 import lombok.Getter;
 
 import java.util.UUID;
 
 import static com.hltech.store.examples.aggregate.basic.Events.OrderCancelled;
 import static com.hltech.store.examples.aggregate.basic.Events.OrderPlaced;
-import static com.hltech.store.examples.eventstore.Event.generateAggregateId;
-import static com.hltech.store.examples.eventstore.Event.generateEventId;
+import static com.hltech.store.examples.event.Event.generateAggregateId;
+import static com.hltech.store.examples.event.Event.generateEventId;
 
 @Getter
 class Order {
@@ -31,15 +31,23 @@ class Order {
     }
 
     Order applyEvent(Event event) {
-        if (OrderPlaced.class.equals(event.getClass())) {
-            status = "Placed";
-            id = event.getAggregateId();
-            number = ((OrderPlaced) event).getOrderNumber();
-        } else if (OrderCancelled.class.equals(event.getClass())) {
-            status = "Cancelled";
-            cancellationReason = ((OrderCancelled) event).getReason();
+        if (event instanceof OrderPlaced) {
+            applyOrderPlaced((OrderPlaced) event);
+        } else if (event instanceof OrderCancelled) {
+            applyOrderCancelled((OrderCancelled) event);
         }
         return this;
+    }
+
+    private void applyOrderPlaced(OrderPlaced event) {
+        status = "Placed";
+        id = event.getAggregateId();
+        number = event.getOrderNumber();
+    }
+
+    private void applyOrderCancelled(OrderCancelled event) {
+        status = "Cancelled";
+        cancellationReason = event.getReason();
     }
 
 }

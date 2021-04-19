@@ -1,16 +1,28 @@
 package com.hltech.store.examples.aggregate.optimisticlocking
 
-import com.hltech.store.examples.eventstore.EventStoreSpecification
+import com.hltech.store.EventStore
+import com.hltech.store.examples.PostgreSQLContainerSpecification
+import com.hltech.store.PostgresEventStore
+import com.hltech.store.examples.event.Event
+import com.hltech.store.versioning.EventVersioningStrategy
+import com.hltech.store.versioning.MappingBasedVersioning
 import spock.lang.Subject
 
 import static org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils.randomAlphanumeric
 
-class OrderServiceFT extends EventStoreSpecification {
+class OrderServiceFT extends PostgreSQLContainerSpecification {
 
-    Config config = new Config(eventStore, eventVersioningStrategy)
+    EventVersioningStrategy<Event> eventVersioningStrategy = new MappingBasedVersioning()
+    EventStore<Event> eventStore = new PostgresEventStore<> (
+        { Event event -> event.getId() },
+        { Event event -> event.getAggregateId() },
+        eventVersioningStrategy,
+        dataSource
+    )
+    OrderRepository orderRepository = new OrderRepository(eventStore)
 
     @Subject
-    def service = config.orderService
+    OrderService service = new OrderService(orderRepository)
 
     def "placeOrder should place an order"() {
 

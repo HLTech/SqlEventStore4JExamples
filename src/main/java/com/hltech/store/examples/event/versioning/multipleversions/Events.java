@@ -1,16 +1,17 @@
-package com.hltech.store.examples.aggregate.optimisticlocking;
+package com.hltech.store.examples.event.versioning.multipleversions;
 
 import com.hltech.store.examples.event.Event;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.Instant;
 import java.util.UUID;
 
 interface Events {
 
     @RequiredArgsConstructor
     @Getter
-    class OrderPlaced implements Event {
+    class OrderPlacedV1 implements Event {
 
         private final UUID id;
         private final UUID aggregateId;
@@ -20,20 +21,24 @@ interface Events {
 
     @RequiredArgsConstructor
     @Getter
-    class OrderCancelled implements Event {
+    class OrderPlacedV2 implements Event {
 
         private final UUID id;
         private final UUID aggregateId;
-        private final String reason;
+        private final String orderNumber;
+        private final Instant creationDate;
 
     }
 
     @RequiredArgsConstructor
     @Getter
-    class OrderSent implements Event {
+    class OrderPlacedV3 implements Event {
 
         private final UUID id;
         private final UUID aggregateId;
+        private final String orderNumber;
+        private final Instant creationDate;
+        private final String priority;
 
     }
 

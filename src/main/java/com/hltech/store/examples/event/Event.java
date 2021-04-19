@@ -1,4 +1,4 @@
-package com.hltech.store.examples.eventstore;
+package com.hltech.store.examples.event;
 
 import java.util.UUID;
 

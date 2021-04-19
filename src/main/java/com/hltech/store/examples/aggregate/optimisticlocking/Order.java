@@ -1,6 +1,6 @@
 package com.hltech.store.examples.aggregate.optimisticlocking;
 
-import com.hltech.store.examples.eventstore.Event;
+import com.hltech.store.examples.event.Event;
 import lombok.Getter;
 
 import java.util.UUID;
@@ -8,8 +8,8 @@ import java.util.UUID;
 import static com.hltech.store.examples.aggregate.optimisticlocking.Events.OrderCancelled;
 import static com.hltech.store.examples.aggregate.optimisticlocking.Events.OrderPlaced;
 import static com.hltech.store.examples.aggregate.optimisticlocking.Events.OrderSent;
-import static com.hltech.store.examples.eventstore.Event.generateAggregateId;
-import static com.hltech.store.examples.eventstore.Event.generateEventId;
+import static com.hltech.store.examples.event.Event.generateAggregateId;
+import static com.hltech.store.examples.event.Event.generateEventId;
 
 @Getter
 class Order {
@@ -43,15 +43,12 @@ class Order {
     }
 
     Order applyEvent(Event event) {
-        if (OrderPlaced.class.equals(event.getClass())) {
-            status = "Placed";
-            id = event.getAggregateId();
-            number = ((OrderPlaced) event).getOrderNumber();
-        } else if (OrderCancelled.class.equals(event.getClass())) {
-            status = "Cancelled";
-            cancellationReason = ((OrderCancelled) event).getReason();
-        } else if (OrderSent.class.equals(event.getClass())) {
-            status = "Sent";
+        if (event instanceof OrderPlaced) {
+            applyOrderPlaced((OrderPlaced) event);
+        } else if (event instanceof OrderCancelled) {
+            applyOrderCancelled((OrderCancelled) event);
+        } else if (event instanceof OrderSent) {
+            applyOrderSent();
         }
         return this;
     }
@@ -59,6 +56,21 @@ class Order {
     Order applyVersion(Integer version) {
         this.version = version;
         return this;
+    }
+
+    private void applyOrderPlaced(OrderPlaced event) {
+        status = "Placed";
+        id = event.getAggregateId();
+        number = event.getOrderNumber();
+    }
+
+    private void applyOrderCancelled(OrderCancelled event) {
+        status = "Cancelled";
+        cancellationReason = event.getReason();
+    }
+
+    private void applyOrderSent() {
+        status = "Sent";
     }
 
 }
